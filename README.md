@@ -1,6 +1,6 @@
 # Custom Content Studio
 
-This repository currently contains the approved execution-environment scaffold only. Product source, entrypoints, database schema, migrations, and provider integrations have not been implemented.
+This repository contains the approved execution-environment scaffold and side-effect-free application bootstrap shells. Database schema, migrations, product workflows, and provider integrations have not been implemented.
 
 ## Supported host toolchain
 
@@ -32,8 +32,23 @@ $env:PIP_CONFIG_FILE = "NUL"
 
 Lock refresh is a governed dependency change; never regenerate it implicitly during app startup or CI.
 
+## Application bootstrap commands
+
+Run Python modules through the repository runner so the `src` package is importable without an editable install or an untracked environment change:
+
+```powershell
+.\scripts\run-module.ps1 custom_content_studio.cli health
+.\scripts\run-module.ps1 custom_content_studio.api
+.\scripts\run-module.ps1 custom_content_studio.bootstrap
+.\scripts\run-module.ps1 custom_content_studio.ui
+.\scripts\run-module.ps1 custom_content_studio.workers
+.\scripts\run-module.ps1 custom_content_studio.scheduler
+```
+
+The runner resolves the repository-local `.venv` and `src` directory from its own location, so it is safe to invoke from another working directory. These modules currently validate composition only; they do not start a server, render product pages, dispatch jobs, or create runtime data.
+
 ## Profiles and secrets
 
-Runtime data belongs under `.runtime\DEV`, `.runtime\TEST`, or `.runtime\STAGING`; the whole directory is ignored by Git. TEST must use fake providers when product code is added. `.env.example` contains non-secret placeholders only. A real `.env` is ignored and must never be committed; provider credentials must eventually be represented by secret-store locators rather than raw values in tracked files or reports.
+Runtime data belongs under `.runtime\DEV`, `.runtime\STAGING`, or `.runtime\PROD`; the whole directory is ignored by Git. `.env.example` contains non-secret placeholders only. A real `.env` is ignored and must never be committed; provider credentials must eventually be represented by secret-store locators rather than raw values in tracked files or reports.
 
-No server or provider command is currently available. See `reports/ENV-02_03_04_EXECUTION_REPORT.md` for the exact readiness status and `NOT RUN` checks.
+No server-start or provider command is currently available. See `reports/ENV-02_03_04_EXECUTION_REPORT.md` for the environment readiness record.
