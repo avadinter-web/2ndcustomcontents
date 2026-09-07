@@ -1,6 +1,6 @@
 # Local Development Gate (LD-00)
 
-Status: `PASS / ACCEPTED FOR LOCAL DEVELOPMENT ONLY`  
+Status: `PASS / ACCEPTED FOR LOCAL DEVELOPMENT ONLY`
 Scope: `E:\Custom_Contents_APP` local implementation and verification
 
 understood as: 사용자는 조직 관리형 VC-00의 외부 provenance 요구를 현재 구현 착수 조건에서 제외하고, 이미 검증한 로컬 PreToolUse 보호를 LD-00으로 채택했다. 이 결정을 운영 배포, 원격 업데이트 또는 조직 보안 준수 선언으로 해석하지 않는다.

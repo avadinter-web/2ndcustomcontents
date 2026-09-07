@@ -1,7 +1,7 @@
 # Implementation Unlock Checklist
 
-Status: `LD-00 PASS / ACCEPTED FOR LOCAL DEVELOPMENT ONLY`  
-Canonical stop code: `LOCAL_DEVELOPMENT_GATE_MISMATCH`  
+Status: `LD-00 PASS / ACCEPTED FOR LOCAL DEVELOPMENT ONLY`
+Canonical stop code: `LOCAL_DEVELOPMENT_GATE_MISMATCH`
 Verified product progress: `0/76 (0%)`
 
 understood as: 조직 관리형 VC-00 요구를 로컬 개발 안전 게이트 LD-00으로 대체한다. LD-00은 현재 장치의 정책·훅·런타임 차단을 검증하여 개발을 시작시키지만, 조직 관리 배포·원격 업데이트·운영 보안 승인을 증명하지 않는다.
