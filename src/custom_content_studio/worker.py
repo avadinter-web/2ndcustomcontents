@@ -1,2 +1,9 @@
-def main() -> None:
-    """Worker shell; durable dispatch is outside CCS-01-001."""
+"""Compatibility alias for the normative plural workers module."""
+
+from .workers import main
+
+__all__ = ["main"]
+
+
+if __name__ == "__main__":
+    main()

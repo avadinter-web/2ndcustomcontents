@@ -1,7 +1,9 @@
 from enum import StrEnum
 from pathlib import Path
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, model_validator
+
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 
 
 class Environment(StrEnum):
@@ -11,21 +13,23 @@ class Environment(StrEnum):
 
 
 class Settings(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
     environment: Environment
     repository_root: Path
     runtime_root: Path
 
-    @field_validator("runtime_root")
-    @classmethod
-    def runtime_is_contained(cls, value: Path) -> Path:
-        if value.name not in {item.value for item in Environment}:
-            raise ValueError("runtime root must end with the selected environment")
-        return value
+    @model_validator(mode="after")
+    def runtime_is_repository_contained(self) -> "Settings":
+        expected_runtime = self.repository_root / ".runtime" / self.environment.value
+        if self.runtime_root != expected_runtime:
+            raise ValueError("runtime root must match the repository profile path")
+        return self
 
 
-def load_settings(environment: Environment = Environment.DEV, repository_root: Path | None = None) -> Settings:
-    root = (repository_root or Path.cwd()).resolve()
+def load_settings(
+    environment: Environment = Environment.DEV, repository_root: Path | None = None
+) -> Settings:
+    root = (repository_root or REPOSITORY_ROOT).resolve()
     runtime = (root / ".runtime" / environment.value).resolve()
-    if root not in runtime.parents:
-        raise ValueError("runtime root escapes repository")
     return Settings(environment=environment, repository_root=root, runtime_root=runtime)
