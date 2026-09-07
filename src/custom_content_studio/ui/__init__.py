@@ -1,5 +1,5 @@
-from .bootstrap import bootstrap
-from .config import Settings
+from ..bootstrap import bootstrap
+from ..config import Settings
 
 
 def main() -> Settings:
@@ -7,5 +7,4 @@ def main() -> Settings:
     return bootstrap()
 
 
-if __name__ == "__main__":
-    main()
+__all__ = ["main"]

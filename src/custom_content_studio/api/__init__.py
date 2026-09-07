@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from .bootstrap import bootstrap
-from .config import Settings
+from ..bootstrap import bootstrap
+from ..config import Settings
 
 app = FastAPI(title="Custom Content Studio")
 
@@ -16,5 +16,4 @@ def main() -> Settings:
     return bootstrap()
 
 
-if __name__ == "__main__":
-    main()
+__all__ = ["app", "health", "main"]

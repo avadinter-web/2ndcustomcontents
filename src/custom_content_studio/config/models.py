@@ -3,8 +3,6 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-
 
 class Environment(StrEnum):
     DEV = "DEV"
@@ -25,11 +23,3 @@ class Settings(BaseModel):
         if self.runtime_root != expected_runtime:
             raise ValueError("runtime root must match the repository profile path")
         return self
-
-
-def load_settings(
-    environment: Environment = Environment.DEV, repository_root: Path | None = None
-) -> Settings:
-    root = (repository_root or REPOSITORY_ROOT).resolve()
-    runtime = (root / ".runtime" / environment.value).resolve()
-    return Settings(environment=environment, repository_root=root, runtime_root=runtime)

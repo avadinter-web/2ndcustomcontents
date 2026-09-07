@@ -2,8 +2,8 @@ import argparse
 import json
 from collections.abc import Sequence
 
-from .bootstrap import bootstrap
-from .config import Environment
+from ..bootstrap import bootstrap
+from ..config import Environment
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -34,5 +34,4 @@ def main(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
+__all__ = ["build_parser", "main"]
