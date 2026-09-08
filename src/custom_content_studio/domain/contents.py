@@ -45,7 +45,7 @@ class Content:
     primary_platform: str | None
     goal: str | None
     status: ContentStatus
-    current_version_id: None
+    current_version_id: str | None
     created_at_utc: datetime
     updated_at_utc: datetime
     archived_at_utc: datetime | None = None
@@ -62,8 +62,7 @@ class Content:
         _require_optional_trimmed(self.goal, "goal")
         if not isinstance(self.status, ContentStatus):
             raise TypeError("status must be a ContentStatus")
-        if self.current_version_id is not None:
-            raise ValueError("current_version_id is not owned by this Content core")
+        _require_optional_trimmed(self.current_version_id, "current_version_id")
         _require_utc(self.created_at_utc, "created_at_utc")
         _require_utc(self.updated_at_utc, "updated_at_utc")
         if self.updated_at_utc < self.created_at_utc:

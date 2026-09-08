@@ -50,9 +50,10 @@ def test_optional_fields_use_none_instead_of_blank(field: str) -> None:
         _content(**{field: ""})
 
 
-def test_current_version_is_outside_content_core() -> None:
-    with pytest.raises(ValueError, match="not owned"):
-        _content(current_version_id="version-1")
+def test_current_version_accepts_a_validated_linked_read_projection() -> None:
+    assert _content(current_version_id="version-1").current_version_id == "version-1"
+    with pytest.raises(ValueError, match="non-empty trimmed"):
+        _content(current_version_id=" version-1 ")
 
 
 def test_content_requires_utc_archive_consistency_and_positive_version() -> None:

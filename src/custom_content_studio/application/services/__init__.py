@@ -1,4 +1,5 @@
 from .assets import AssetService, RegisterAsset, UpdateAsset
+from .content_versions import ContentVersionService, CreateContentVersion
 from .contents import ContentService, CreateContent, UpdateContent
 from .service_account_credentials import (
     RotateServiceAccountCredentialReference,
@@ -10,7 +11,9 @@ from .sessions import SessionService
 __all__ = [
     "AssetService",
     "ContentService",
+    "ContentVersionService",
     "CreateContent",
+    "CreateContentVersion",
     "RegisterAsset",
     "RotateServiceAccountCredentialReference",
     "ServiceAccountCredentialRotationResult",

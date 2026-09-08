@@ -107,7 +107,7 @@ def test_scope_project_and_reopen_persistence(tmp_path: Path) -> None:
         connection.close()
 
 
-def test_descriptive_update_uses_cas_without_transition_or_linkage(tmp_path: Path) -> None:
+def test_descriptive_update_uses_cas_and_preserves_version_linkage(tmp_path: Path) -> None:
     factory = _factory(tmp_path)
     repository = SQLiteContentRepository()
     with SQLiteUnitOfWork(factory) as uow:
@@ -130,6 +130,39 @@ def test_descriptive_update_uses_cas_without_transition_or_linkage(tmp_path: Pat
         assert updated.row_version == 2
         with pytest.raises(ContentConflictError):
             repository.update(uow.connection, replace(original, title="Stale"))
+
+        uow.connection.execute(
+            "INSERT INTO users(id,email,email_normalized,status,created_at,updated_at) "
+            "VALUES ('user-1','user@example.test','user@example.test','ACTIVE',?,?)",
+            ("2026-09-09T00:00:00Z", "2026-09-09T00:00:00Z"),
+        )
+        uow.connection.execute(
+            "INSERT INTO workspace_memberships(workspace_id,user_id,role,created_at,updated_at) "
+            "VALUES ('workspace-1','user-1','EDITOR',?,?)",
+            ("2026-09-09T00:00:00Z", "2026-09-09T00:00:00Z"),
+        )
+        uow.connection.execute(
+            "INSERT INTO content_versions(id,content_id,version_number,status,"
+            "content_snapshot_json,snapshot_hash,created_by,created_at) "
+            "VALUES ('version-1','content-1',1,'DRAFT',?,'hash','user-1',?)",
+            (
+                '{"_schema":"ccs.content-version-snapshot","_version":1,'
+                '"data":{"content":{},"script":null,"title":"Launch"}}',
+                "2026-09-09T00:00:02Z",
+            ),
+        )
+        uow.connection.execute(
+            "UPDATE contents SET current_version_id='version-1',row_version=3 WHERE id='content-1'"
+        )
+        linked = repository.get_by_id(uow.connection, "workspace-1", "content-1")
+        assert linked is not None
+        assert linked.current_version_id == "version-1"
+        linked_updated = repository.update(
+            uow.connection,
+            replace(linked, title="Linked update", updated_at_utc=NOW + timedelta(seconds=3)),
+        )
+        assert linked_updated.current_version_id == "version-1"
+        assert linked_updated.row_version == 4
 
 
 def test_archived_content_cannot_be_updated(tmp_path: Path) -> None:

@@ -7,6 +7,7 @@ from pathlib import Path
 from ..application.services import (
     AssetService,
     ContentService,
+    ContentVersionService,
     ServiceAccountCredentialService,
     SessionService,
 )
@@ -15,6 +16,7 @@ from ..infrastructure.sqlite.repositories import (
     SQLiteAssetRepository,
     SQLiteAuditEventRepository,
     SQLiteContentRepository,
+    SQLiteContentVersionRepository,
     SQLiteServiceAccountRepository,
     SQLiteSessionRepository,
 )
@@ -42,6 +44,8 @@ class LocalSecurityComposition:
     asset_service: AssetService
     contents: SQLiteContentRepository
     content_service: ContentService
+    content_versions: SQLiteContentVersionRepository
+    content_version_service: ContentVersionService
 
 
 @dataclass(frozen=True)
@@ -59,6 +63,7 @@ def compose_local_security(
     audit_events = SQLiteAuditEventRepository()
     assets = SQLiteAssetRepository()
     contents = SQLiteContentRepository()
+    content_versions = SQLiteContentVersionRepository()
     return LocalSecurityComposition(
         repository=repository,
         sessions=SessionService(factory, repository),
@@ -73,6 +78,8 @@ def compose_local_security(
         asset_service=AssetService(factory, assets),
         contents=contents,
         content_service=ContentService(factory, contents),
+        content_versions=content_versions,
+        content_version_service=ContentVersionService(factory, contents, content_versions),
     )
 
 

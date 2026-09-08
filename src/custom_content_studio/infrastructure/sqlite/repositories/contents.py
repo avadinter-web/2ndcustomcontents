@@ -32,10 +32,6 @@ def _datetime(value: object) -> datetime:
 
 
 def _to_content(row: sqlite3.Row) -> Content:
-    if row["current_version_id"] is not None:
-        raise ContentRepositoryError(
-            "CONTENT_DATA_INVALID", "current version linkage is outside this repository"
-        )
     archived_at = row["archived_at"]
     return Content(
         content_id=str(row["id"]),
@@ -48,7 +44,9 @@ def _to_content(row: sqlite3.Row) -> Content:
         ),
         goal=None if row["goal"] is None else str(row["goal"]),
         status=ContentStatus(str(row["status"])),
-        current_version_id=None,
+        current_version_id=(
+            None if row["current_version_id"] is None else str(row["current_version_id"])
+        ),
         created_at_utc=_datetime(row["created_at"]),
         updated_at_utc=_datetime(row["updated_at"]),
         archived_at_utc=None if archived_at is None else _datetime(archived_at),
@@ -122,7 +120,7 @@ class SQLiteContentRepository:
         cursor = connection.execute(
             "UPDATE contents SET title=?,content_type=?,primary_platform=?,goal=?,updated_at=?,"
             "row_version=row_version+1 WHERE workspace_id=? AND id=? AND project_id=? "
-            "AND row_version=? AND status<>'ARCHIVED' AND current_version_id IS NULL",
+            "AND row_version=? AND status<>'ARCHIVED'",
             (
                 content.title,
                 content.content_type.value,
@@ -163,18 +161,13 @@ class SQLiteContentRepository:
         expected_row_version: int,
     ) -> None:
         row = connection.execute(
-            "SELECT status,current_version_id,row_version FROM contents "
-            "WHERE workspace_id=? AND id=?",
+            "SELECT status,row_version FROM contents WHERE workspace_id=? AND id=?",
             (workspace_id, content_id),
         ).fetchone()
         if row is None:
             raise ContentNotFoundError()
         if row["status"] == "ARCHIVED":
             raise ContentArchivedError()
-        if row["current_version_id"] is not None:
-            raise ContentRepositoryError(
-                "CONTENT_LINKAGE_OWNED_ELSEWHERE", "current version linkage cannot be changed"
-            )
         if int(row["row_version"]) != expected_row_version:
             raise ContentConflictError()
         raise ContentConflictError()

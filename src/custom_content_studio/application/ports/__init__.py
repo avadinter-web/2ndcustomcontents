@@ -20,6 +20,13 @@ from .content_repository import (
     ContentRepositoryError,
     ContentRepositoryPort,
 )
+from .content_version_repository import (
+    ContentVersionAlreadyExistsError,
+    ContentVersionConflictError,
+    ContentVersionNotFoundError,
+    ContentVersionRepositoryError,
+    ContentVersionRepositoryPort,
+)
 from .project_repository import (
     ProjectAlreadyExistsError,
     ProjectArchivedError,
@@ -57,6 +64,11 @@ __all__ = [
     "ContentNotFoundError",
     "ContentRepositoryError",
     "ContentRepositoryPort",
+    "ContentVersionAlreadyExistsError",
+    "ContentVersionConflictError",
+    "ContentVersionNotFoundError",
+    "ContentVersionRepositoryError",
+    "ContentVersionRepositoryPort",
     "ProjectAlreadyExistsError",
     "ProjectArchivedError",
     "ProjectConflictError",
