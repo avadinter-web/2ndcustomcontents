@@ -5,7 +5,7 @@ from ..scope_guard import validate_runtime_scope
 
 
 def bootstrap(
-    environment: Environment = Environment.DEV,
+    environment: Environment | str | None = None,
     repository_root: Path | None = None,
 ) -> Settings:
     settings = load_settings(environment, repository_root)

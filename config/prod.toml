@@ -1,0 +1,9 @@
+environment = "PROD"
+log_level = "INFO"
+log_format = "json"
+debug = false
+api_host = "127.0.0.1"
+api_port = 8002
+ui_api_url = "http://127.0.0.1:8002"
+kill_publish = true
+kill_scheduler = true

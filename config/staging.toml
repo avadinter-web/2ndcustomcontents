@@ -1,0 +1,9 @@
+environment = "STAGING"
+log_level = "INFO"
+log_format = "console"
+debug = false
+api_host = "127.0.0.1"
+api_port = 8001
+ui_api_url = "http://127.0.0.1:8001"
+kill_publish = true
+kill_scheduler = true

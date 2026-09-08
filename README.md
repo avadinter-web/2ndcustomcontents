@@ -37,6 +37,7 @@ Lock refresh is a governed dependency change; never regenerate it implicitly dur
 Run Python modules through the repository runner so the `src` package is importable without an editable install or an untracked environment change:
 
 ```powershell
+ $env:CCS_ENV = "DEV"
 .\scripts\run-module.ps1 custom_content_studio.cli health
 .\scripts\run-module.ps1 custom_content_studio.api
 .\scripts\run-module.ps1 custom_content_studio.bootstrap
@@ -49,6 +50,17 @@ The runner resolves the repository-local `.venv` and `src` directory from its ow
 
 ## Profiles and secrets
 
-Runtime data belongs under `.runtime\DEV`, `.runtime\STAGING`, or `.runtime\PROD`; the whole directory is ignored by Git. `.env.example` contains non-secret placeholders only. A real `.env` is ignored and must never be committed; provider credentials must eventually be represented by secret-store locators rather than raw values in tracked files or reports.
+Runtime data belongs under `.runtime\DEV`, `.runtime\STAGING`, or `.runtime\PROD`; the whole directory is ignored by Git. Select one profile explicitly with `--environment DEV` or process `CCS_ENV=DEV`; the CLI selector wins over `CCS_ENV`. If neither is supplied, or the selector is anything other than exact `DEV`, `STAGING`, or `PROD`, startup fails. There is no DEV fallback.
+
+The selected fixed profile is read only from `config\dev.toml`, `config\staging.toml`, or `config\prod.toml`. Approved non-secret process settings (`CCS_LOG_LEVEL`, `CCS_LOG_FORMAT`, `CCS_DEBUG`, `CCS_API_HOST`, `CCS_API_PORT`, `CCS_UI_API_URL`, `CCS_KILL_PUBLISH`, and `CCS_KILL_SCHEDULER`) override profile values; all other `CCS_*` settings fail closed. `.env.example` is documentation only and is not loaded. A real `.env` is ignored and must never be committed; provider credentials must eventually be represented by secret-store locators rather than raw values in tracked files or reports.
+
+For example:
+
+```powershell
+$env:CCS_ENV = "STAGING"
+.\scripts\run-module.ps1 custom_content_studio.cli health
+.\scripts\run-module.ps1 custom_content_studio.cli --environment PROD health
+Remove-Item Env:CCS_ENV -ErrorAction SilentlyContinue
+```
 
 No server-start or provider command is currently available. See `reports/ENV-02_03_04_EXECUTION_REPORT.md` for the environment readiness record.

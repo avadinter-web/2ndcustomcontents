@@ -11,7 +11,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--environment",
         choices=[environment.value for environment in Environment],
-        default=Environment.DEV.value,
+        default=None,
     )
     parser.add_argument("command", choices=["health"])
     return parser
@@ -19,7 +19,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    settings = bootstrap(Environment(args.environment))
+    settings = bootstrap(args.environment)
     if args.command == "health":
         print(
             json.dumps(

@@ -1,7 +1,6 @@
 import json
-from pathlib import Path
 
-from pytest import CaptureFixture
+from pytest import CaptureFixture, MonkeyPatch
 
 from custom_content_studio.api import app
 from custom_content_studio.api import main as api_main
@@ -15,18 +14,17 @@ from custom_content_studio.workers import main as worker_main
 
 
 def test_settings_are_repository_scoped() -> None:
-    repository_root = (Path(__file__).parent / "fixture-repository").resolve()
+    settings = load_settings(Environment.DEV)
 
-    assert load_settings(Environment.DEV, repository_root).runtime_root == (
-        repository_root / ".runtime" / "DEV"
-    )
+    assert settings.runtime_root == settings.repository_root / ".runtime" / "DEV"
 
 
 def test_health_route_exists() -> None:
     assert any(route.path == "/health" for route in app.routes)
 
 
-def test_process_shells_clean_boot() -> None:
+def test_process_shells_clean_boot(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setenv("CCS_ENV", "DEV")
     entrypoints = (
         bootstrap_main,
         api_main,
@@ -40,7 +38,7 @@ def test_process_shells_clean_boot() -> None:
 
 
 def test_cli_health(capsys: CaptureFixture[str]) -> None:
-    assert cli_main(["health"]) == 0
+    assert cli_main(["--environment", "DEV", "health"]) == 0
     output = json.loads(capsys.readouterr().out)
     assert output["status"] == "ok"
     assert output["environment"] == "DEV"

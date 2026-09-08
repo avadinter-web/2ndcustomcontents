@@ -1,0 +1,9 @@
+environment = "DEV"
+log_level = "DEBUG"
+log_format = "console"
+debug = true
+api_host = "127.0.0.1"
+api_port = 8000
+ui_api_url = "http://127.0.0.1:8000"
+kill_publish = true
+kill_scheduler = true

@@ -16,6 +16,9 @@ def _valid_repository(root: Path) -> Path:
         encoding="utf-8",
     )
     (package_root / "__init__.py").write_text("", encoding="utf-8")
+    config_root = root / "config"
+    config_root.mkdir()
+    (config_root / "dev.toml").write_text('environment = "DEV"\n', encoding="utf-8")
     return root
 
 

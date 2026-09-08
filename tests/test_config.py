@@ -2,12 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from custom_content_studio.config import Environment, Settings, load_settings
+from custom_content_studio.config import REPOSITORY_ROOT, Environment, Settings, load_settings
 
 
 @pytest.mark.parametrize("environment", list(Environment))
 def test_profile_runtime_is_repository_scoped(environment: Environment) -> None:
-    repository_root = (Path(__file__).parent / "fixture-repository").resolve()
+    repository_root = REPOSITORY_ROOT
 
     settings = load_settings(environment, repository_root)
 
