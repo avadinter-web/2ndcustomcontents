@@ -20,6 +20,7 @@ from .effective_values import (
     EffectiveValueResult,
     EffectiveValueSource,
 )
+from .normalized_rect import NormalizedRect
 from .projects import Project, ProjectStatus
 from .workspaces import JsonValue, Workspace
 
@@ -40,6 +41,7 @@ __all__ = [
     "EffectiveValueSource",
     "InvalidStateTransitionError",
     "JsonValue",
+    "NormalizedRect",
     "Project",
     "ProjectStatus",
     "StorageProvider",
