@@ -13,4 +13,3 @@ publication.
 
 Gate PASS means only that the implemented CCS-01 local foundation contracts are reproducible on
 this local host. T-ENV-005 and complete T-ENV-006 remain explicitly unclaimed.
-

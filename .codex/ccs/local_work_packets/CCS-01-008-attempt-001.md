@@ -47,4 +47,3 @@ Stop with the canonical r13 code if a bound digest changes, prerequisite evidenc
 unlisted repository write is required, or execution would touch credentials, providers, network,
 media, runtime databases, deployment or publication. Do not repair a prerequisite inside this
 gate attempt.
-
