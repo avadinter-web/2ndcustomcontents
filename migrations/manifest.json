@@ -1,0 +1,13 @@
+{
+  "_schema": "ccs.sqlite.migration-manifest",
+  "_version": 1,
+  "application_version": "0.0.0",
+  "migrations": [
+    {
+      "version": 1,
+      "name": "initial_v2_2",
+      "path": "0001_initial_v2_2.sql",
+      "checksum_sha256": "2b532c6fbe5b45241f2cd815b6de4947d0a056b32754165fd06c1e9c12a2980f"
+    }
+  ]
+}
