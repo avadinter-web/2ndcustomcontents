@@ -7,6 +7,7 @@ from pathlib import Path
 from ..application.services import (
     AssetService,
     ContentService,
+    ContentStateTransitionService,
     ContentVersionService,
     ServiceAccountCredentialService,
     SessionService,
@@ -16,6 +17,7 @@ from ..infrastructure.sqlite.repositories import (
     SQLiteAssetRepository,
     SQLiteAuditEventRepository,
     SQLiteContentRepository,
+    SQLiteContentStateTransitionRepository,
     SQLiteContentVersionRepository,
     SQLiteServiceAccountRepository,
     SQLiteSessionRepository,
@@ -46,6 +48,8 @@ class LocalSecurityComposition:
     content_service: ContentService
     content_versions: SQLiteContentVersionRepository
     content_version_service: ContentVersionService
+    content_state_transitions: SQLiteContentStateTransitionRepository
+    content_state_transition_service: ContentStateTransitionService
 
 
 @dataclass(frozen=True)
@@ -64,6 +68,7 @@ def compose_local_security(
     assets = SQLiteAssetRepository()
     contents = SQLiteContentRepository()
     content_versions = SQLiteContentVersionRepository()
+    content_state_transitions = SQLiteContentStateTransitionRepository()
     return LocalSecurityComposition(
         repository=repository,
         sessions=SessionService(factory, repository),
@@ -80,6 +85,10 @@ def compose_local_security(
         content_service=ContentService(factory, contents),
         content_versions=content_versions,
         content_version_service=ContentVersionService(factory, contents, content_versions),
+        content_state_transitions=content_state_transitions,
+        content_state_transition_service=ContentStateTransitionService(
+            factory, content_state_transitions
+        ),
     )
 
 

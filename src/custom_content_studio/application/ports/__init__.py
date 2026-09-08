@@ -20,6 +20,13 @@ from .content_repository import (
     ContentRepositoryError,
     ContentRepositoryPort,
 )
+from .content_state_transition_repository import (
+    ContentStateTransitionConflictError,
+    ContentStateTransitionInvalidError,
+    ContentStateTransitionNotFoundError,
+    ContentStateTransitionRepositoryError,
+    ContentStateTransitionRepositoryPort,
+)
 from .content_version_repository import (
     ContentVersionAlreadyExistsError,
     ContentVersionConflictError,
@@ -64,6 +71,11 @@ __all__ = [
     "ContentNotFoundError",
     "ContentRepositoryError",
     "ContentRepositoryPort",
+    "ContentStateTransitionConflictError",
+    "ContentStateTransitionInvalidError",
+    "ContentStateTransitionNotFoundError",
+    "ContentStateTransitionRepositoryError",
+    "ContentStateTransitionRepositoryPort",
     "ContentVersionAlreadyExistsError",
     "ContentVersionConflictError",
     "ContentVersionNotFoundError",

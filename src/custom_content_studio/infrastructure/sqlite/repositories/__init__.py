@@ -4,6 +4,7 @@ from .audit_events import (
     canonical_event_json,
     compute_audit_event_hash,
 )
+from .content_state_transitions import SQLiteContentStateTransitionRepository
 from .content_versions import SQLiteContentVersionRepository
 from .contents import SQLiteContentRepository
 from .projects import SQLiteProjectRepository
@@ -15,6 +16,7 @@ __all__ = [
     "SQLiteAssetRepository",
     "SQLiteAuditEventRepository",
     "SQLiteContentRepository",
+    "SQLiteContentStateTransitionRepository",
     "SQLiteContentVersionRepository",
     "SQLiteProjectRepository",
     "SQLiteServiceAccountRepository",
