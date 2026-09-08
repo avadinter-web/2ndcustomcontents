@@ -1,7 +1,8 @@
 from ..config import Settings
+from ..observability import Component
 from .composition import bootstrap
 
 
 def main() -> Settings:
-    """Validate the shared composition root without external side effects."""
-    return bootstrap()
+    """Validate startup and emit one bounded local bootstrap diagnostic."""
+    return bootstrap(component=Component.BOOTSTRAP)

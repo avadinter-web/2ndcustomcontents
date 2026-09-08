@@ -1,9 +1,16 @@
 import argparse
 import json
+import logging
 from collections.abc import Sequence
 
-from ..bootstrap import bootstrap
-from ..config import Environment
+from ..config import Environment, load_settings
+from ..observability import (
+    Component,
+    HealthStatus,
+    ObservabilityContext,
+    configure_local_logging,
+    readiness,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -19,19 +26,17 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    settings = bootstrap(args.environment)
-    if args.command == "health":
-        print(
-            json.dumps(
-                {
-                    "environment": settings.environment.value,
-                    "runtime_root": str(settings.runtime_root),
-                    "status": "ok",
-                },
-                sort_keys=True,
-            )
+    document = readiness(Component.CLI, environment=args.environment)
+    if document.status is HealthStatus.READY:
+        settings = load_settings(args.environment)
+        configure_local_logging(settings).emit(
+            logging.INFO,
+            "startup.ready",
+            "local startup checks passed",
+            ObservabilityContext(Component.CLI),
         )
-    return 0
+    print(json.dumps(document.as_dict(), sort_keys=True))
+    return 0 if document.status is HealthStatus.READY else 1
 
 
 __all__ = ["build_parser", "main"]

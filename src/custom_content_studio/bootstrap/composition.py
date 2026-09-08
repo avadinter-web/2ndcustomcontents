@@ -1,17 +1,35 @@
+from __future__ import annotations
+
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 
 from ..application.services import SessionService
 from ..config import Environment, Settings, load_settings
 from ..infrastructure.sqlite.repositories import SQLiteSessionRepository
+from ..observability import (
+    Component,
+    HealthStatus,
+    LocalStructuredLogger,
+    ObservabilityContext,
+    configure_local_logging,
+    readiness_from_settings,
+)
 from ..persistence import SQLiteConnectionFactory
-from ..scope_guard import validate_runtime_scope
+from ..runtime_paths import normalize_runtime_paths
+from ..scope_guard import ScopeGuardError, validate_runtime_scope
 
 
 @dataclass(frozen=True)
 class LocalSecurityComposition:
     repository: SQLiteSessionRepository
     sessions: SessionService
+
+
+@dataclass(frozen=True)
+class LocalObservabilityComposition:
+    logger: LocalStructuredLogger
+    context: ObservabilityContext
 
 
 def compose_local_security(
@@ -22,10 +40,59 @@ def compose_local_security(
     return LocalSecurityComposition(repository, SessionService(factory, repository))
 
 
+def compose_local_observability(
+    settings: Settings,
+    component: Component,
+) -> LocalObservabilityComposition:
+    """Bind the local stderr logger without opening a file or remote sink."""
+    return LocalObservabilityComposition(
+        logger=configure_local_logging(settings),
+        context=ObservabilityContext(component),
+    )
+
+
+def _emit_not_ready(
+    observability: LocalObservabilityComposition,
+    diagnostic_code: str,
+) -> None:
+    context = ObservabilityContext(
+        component=observability.context.component,
+        error_code=diagnostic_code,
+    )
+    observability.logger.emit(
+        logging.ERROR,
+        "startup.not_ready",
+        "local startup checks did not pass",
+        context,
+    )
+
+
 def bootstrap(
     environment: Environment | str | None = None,
     repository_root: Path | None = None,
+    *,
+    component: Component = Component.BOOTSTRAP,
 ) -> Settings:
     settings = load_settings(environment, repository_root)
-    validate_runtime_scope(settings.repository_root, (settings.runtime_root,))
+    observability = compose_local_observability(settings, component)
+    try:
+        validate_runtime_scope(settings.repository_root, (settings.runtime_root,))
+    except (OSError, ScopeGuardError, ValueError):
+        _emit_not_ready(observability, "SCOPE_INVALID")
+        raise
+    try:
+        normalize_runtime_paths(settings.runtime_root)
+    except (OSError, ValueError):
+        _emit_not_ready(observability, "RUNTIME_PATHS_INVALID")
+        raise
+    health = readiness_from_settings(settings, component)
+    if health.status is not HealthStatus.READY:
+        _emit_not_ready(observability, "STARTUP_NOT_READY")
+        raise RuntimeError("STARTUP_NOT_READY: local startup checks did not pass")
+    observability.logger.emit(
+        logging.INFO,
+        "startup.ready",
+        "local startup checks passed",
+        observability.context,
+    )
     return settings

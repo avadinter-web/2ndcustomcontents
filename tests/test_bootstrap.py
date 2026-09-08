@@ -19,8 +19,10 @@ def test_settings_are_repository_scoped() -> None:
     assert settings.runtime_root == settings.repository_root / ".runtime" / "DEV"
 
 
-def test_health_route_exists() -> None:
-    assert any(route.path == "/health" for route in app.routes)
+def test_health_routes_exist() -> None:
+    paths = {route.path for route in app.routes}
+
+    assert {"/health", "/health/live", "/health/ready"} <= paths
 
 
 def test_process_shells_clean_boot(monkeypatch: MonkeyPatch) -> None:
@@ -40,5 +42,6 @@ def test_process_shells_clean_boot(monkeypatch: MonkeyPatch) -> None:
 def test_cli_health(capsys: CaptureFixture[str]) -> None:
     assert cli_main(["--environment", "DEV", "health"]) == 0
     output = json.loads(capsys.readouterr().out)
-    assert output["status"] == "ok"
+    assert output["status"] == "READY"
     assert output["environment"] == "DEV"
+    assert "runtime_root" not in output
