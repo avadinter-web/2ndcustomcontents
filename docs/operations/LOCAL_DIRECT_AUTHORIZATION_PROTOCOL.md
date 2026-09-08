@@ -37,6 +37,21 @@ commit and push. The authorization excludes all external or production actions l
 - It permits only local code, tests, local development data and local media-tool validation.
 - It forbids deployment, publishing, remote updates, external transmission, credential/API-key
   changes, billing, production migrations, destructive operations and external provider actions.
+
+## Autonomous delivery continuity
+
+For an active serial local-leaf decision, a leaf completion report is an internal checkpoint, not a
+terminal orchestration event. The orchestrator must, in the same active delivery flow:
+
+1. independently verify the exact changed paths, leaf tests, static checks and whitespace;
+2. commit and push a passing bounded leaf under the standing delivery policy;
+3. dispatch the next frozen-design discovery, successor resolution, packet or implementation step;
+4. inspect the dispatched work's actual state before reporting it as running.
+
+The orchestrator must never describe a queued instruction, prepared packet or completed worker as
+an active implementation. If a dispatched worker reports no state change across two checks, stop
+it, inspect the working tree directly and continue or report the concrete blocker. A final user
+message may summarize a completed milestone, but does not end the serial delivery flow.
 - If the frozen registry, required gate evidence, path ownership, work-packet contents or Git
   baseline disagrees with the presented scope, stop with `LOCAL_DEVELOPMENT_GATE_MISMATCH` or
   `TASK_ENVELOPE_INCOMPLETE`; do not infer approval from a prior leaf.

@@ -4,11 +4,17 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 
-from ..application.services import AssetService, ServiceAccountCredentialService, SessionService
+from ..application.services import (
+    AssetService,
+    ContentService,
+    ServiceAccountCredentialService,
+    SessionService,
+)
 from ..config import Environment, Settings, load_settings
 from ..infrastructure.sqlite.repositories import (
     SQLiteAssetRepository,
     SQLiteAuditEventRepository,
+    SQLiteContentRepository,
     SQLiteServiceAccountRepository,
     SQLiteSessionRepository,
 )
@@ -34,6 +40,8 @@ class LocalSecurityComposition:
     service_account_credentials: ServiceAccountCredentialService
     assets: SQLiteAssetRepository
     asset_service: AssetService
+    contents: SQLiteContentRepository
+    content_service: ContentService
 
 
 @dataclass(frozen=True)
@@ -50,6 +58,7 @@ def compose_local_security(
     service_accounts = SQLiteServiceAccountRepository()
     audit_events = SQLiteAuditEventRepository()
     assets = SQLiteAssetRepository()
+    contents = SQLiteContentRepository()
     return LocalSecurityComposition(
         repository=repository,
         sessions=SessionService(factory, repository),
@@ -62,6 +71,8 @@ def compose_local_security(
         ),
         assets=assets,
         asset_service=AssetService(factory, assets),
+        contents=contents,
+        content_service=ContentService(factory, contents),
     )
 
 
