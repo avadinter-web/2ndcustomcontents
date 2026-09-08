@@ -24,20 +24,22 @@ understood as: 사용자는 조직 관리형 VC-00의 외부 provenance 요구�
 ## Direct local leaf authorization
 
 For this repository's LD-00 profile only, an explicit user decision in the active Codex
-conversation may authorize one exact local-development leaf after its scope has been presented.
-This is a local development control, not a replacement for the package's trusted-dispatcher
-boundary. The decision must be recorded in an attempt-scoped local work packet together with:
+conversation may authorize one exact local-development leaf after its scope has been presented,
+or a bounded serial local-leaf scope that follows the frozen design order. This is a local
+development control, not a replacement for the package's trusted-dispatcher boundary. The
+decision must be recorded in an attempt-scoped local work packet together with:
 
 - one canonical leaf ID, parent `IMP-*` package, exact repository and frozen-registry revision;
 - the exact allowed paths, tests, commands, exclusions and no-external-effect policy;
-- the preceding assistant scope presentation and the user decision locator;
+- the preceding assistant scope presentation, the user decision locator, and, for serial scope,
+  its exact excluded action classes and design-order boundary;
 - one writer/worktree and a fresh preflight check of LD-00, VC-01, VC-01B and VC-02 evidence.
 
 The local record must use a distinct `LD00_DIRECT_USER_AUTHORIZATION` authority label. It must
 never claim `ACTIVE` trusted-dispatcher status, host injection, MDM provenance, or authority to
 perform deployment, publishing, credential changes, billing, remote updates, external writes or
-destructive actions. A later leaf always needs a new user decision; successor authority is never
-inherited.
+destructive actions. A serial decision applies only while its stated design-order boundary and
+exclusions remain unchanged; otherwise a new user decision is required.
 
 ## Re-entry criteria for managed or production work
 
