@@ -1,3 +1,4 @@
+from .assets import SQLiteAssetRepository
 from .audit_events import (
     SQLiteAuditEventRepository,
     canonical_event_json,
@@ -9,6 +10,7 @@ from .sessions import SQLiteSessionRepository, encode_token_hash, verify_token_h
 from .workspaces import SQLiteWorkspaceRepository
 
 __all__ = [
+    "SQLiteAssetRepository",
     "SQLiteAuditEventRepository",
     "SQLiteProjectRepository",
     "SQLiteServiceAccountRepository",

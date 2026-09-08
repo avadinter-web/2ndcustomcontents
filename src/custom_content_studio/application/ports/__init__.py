@@ -1,3 +1,11 @@
+from .asset_repository import (
+    AssetAlreadyExistsError,
+    AssetArchivedError,
+    AssetConflictError,
+    AssetNotFoundError,
+    AssetRepositoryError,
+    AssetRepositoryPort,
+)
 from .audit_event_repository import (
     AuditEventAppendPort,
     AuditEventDraft,
@@ -25,6 +33,12 @@ from .workspace_repository import (
 )
 
 __all__ = [
+    "AssetAlreadyExistsError",
+    "AssetArchivedError",
+    "AssetConflictError",
+    "AssetNotFoundError",
+    "AssetRepositoryError",
+    "AssetRepositoryPort",
     "AuditEventAppendPort",
     "AuditEventDraft",
     "AuditEventRecord",
