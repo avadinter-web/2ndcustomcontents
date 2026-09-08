@@ -4,6 +4,14 @@ from .audit_event_repository import (
     AuditEventRecord,
     AuditValue,
 )
+from .project_repository import (
+    ProjectAlreadyExistsError,
+    ProjectArchivedError,
+    ProjectConflictError,
+    ProjectNotFoundError,
+    ProjectRepositoryError,
+    ProjectRepositoryPort,
+)
 from .secret_store import SecretLease, SecretStorePort
 from .service_account_repository import ServiceAccountRepositoryPort
 from .session_repository import SessionRepositoryPort
@@ -21,6 +29,12 @@ __all__ = [
     "AuditEventDraft",
     "AuditEventRecord",
     "AuditValue",
+    "ProjectAlreadyExistsError",
+    "ProjectArchivedError",
+    "ProjectConflictError",
+    "ProjectNotFoundError",
+    "ProjectRepositoryError",
+    "ProjectRepositoryPort",
     "SecretLease",
     "SecretStorePort",
     "ServiceAccountRepositoryPort",
