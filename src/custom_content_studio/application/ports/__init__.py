@@ -7,6 +7,14 @@ from .audit_event_repository import (
 from .secret_store import SecretLease, SecretStorePort
 from .service_account_repository import ServiceAccountRepositoryPort
 from .session_repository import SessionRepositoryPort
+from .workspace_repository import (
+    WorkspaceAlreadyExistsError,
+    WorkspaceArchivedError,
+    WorkspaceConflictError,
+    WorkspaceNotFoundError,
+    WorkspaceRepositoryError,
+    WorkspaceRepositoryPort,
+)
 
 __all__ = [
     "AuditEventAppendPort",
@@ -17,4 +25,10 @@ __all__ = [
     "SecretStorePort",
     "ServiceAccountRepositoryPort",
     "SessionRepositoryPort",
+    "WorkspaceAlreadyExistsError",
+    "WorkspaceArchivedError",
+    "WorkspaceConflictError",
+    "WorkspaceNotFoundError",
+    "WorkspaceRepositoryError",
+    "WorkspaceRepositoryPort",
 ]
