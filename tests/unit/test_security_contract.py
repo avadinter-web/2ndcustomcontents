@@ -137,6 +137,7 @@ def test_secret_reference_and_nested_masking_do_not_leak() -> None:
     reference = SecretReference(locator)
     assert str(reference) == "[SECRET_REF]"
     assert locator not in repr(reference)
+    assert reference.locator_for_storage() == locator
     payload = {
         "nested": [{"Api-Key": raw}, {"safe": "visible"}],
         "refreshToken": raw,

@@ -71,6 +71,10 @@ class SecretReference:
     def __repr__(self) -> str:
         return "SecretReference([SECRET_REF])"
 
+    def locator_for_storage(self) -> str:
+        """Return the opaque locator only at an internal persistence boundary."""
+        return self._locator
+
 
 @dataclass(frozen=True)
 class ActorContext:

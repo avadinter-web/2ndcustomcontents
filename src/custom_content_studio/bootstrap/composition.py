@@ -4,9 +4,13 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 
-from ..application.services import SessionService
+from ..application.services import ServiceAccountCredentialService, SessionService
 from ..config import Environment, Settings, load_settings
-from ..infrastructure.sqlite.repositories import SQLiteSessionRepository
+from ..infrastructure.sqlite.repositories import (
+    SQLiteAuditEventRepository,
+    SQLiteServiceAccountRepository,
+    SQLiteSessionRepository,
+)
 from ..observability import (
     Component,
     HealthStatus,
@@ -24,6 +28,9 @@ from ..scope_guard import ScopeGuardError, validate_runtime_scope
 class LocalSecurityComposition:
     repository: SQLiteSessionRepository
     sessions: SessionService
+    service_accounts: SQLiteServiceAccountRepository
+    audit_events: SQLiteAuditEventRepository
+    service_account_credentials: ServiceAccountCredentialService
 
 
 @dataclass(frozen=True)
@@ -37,7 +44,19 @@ def compose_local_security(
 ) -> LocalSecurityComposition:
     """Bind local security services without opening or migrating a database."""
     repository = SQLiteSessionRepository()
-    return LocalSecurityComposition(repository, SessionService(factory, repository))
+    service_accounts = SQLiteServiceAccountRepository()
+    audit_events = SQLiteAuditEventRepository()
+    return LocalSecurityComposition(
+        repository=repository,
+        sessions=SessionService(factory, repository),
+        service_accounts=service_accounts,
+        audit_events=audit_events,
+        service_account_credentials=ServiceAccountCredentialService(
+            factory,
+            service_accounts,
+            audit_events,
+        ),
+    )
 
 
 def compose_local_observability(
