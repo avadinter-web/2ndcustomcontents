@@ -14,6 +14,7 @@ from .content_versions import (
     compute_snapshot_hash,
 )
 from .contents import Content, ContentStatus, ContentType
+from .editable_text import normalize_editable_text
 from .effective_values import (
     EffectiveValueCandidate,
     EffectiveValueResolver,
@@ -47,6 +48,7 @@ __all__ = [
     "StorageProvider",
     "Workspace",
     "compute_snapshot_hash",
+    "normalize_editable_text",
     "require_content_transition",
     "require_content_version_transition",
 ]
