@@ -17,8 +17,38 @@ from ..observability import (
     new_request_context,
     readiness,
 )
+from .workspace_read_shell import (
+    ActorContextProvider,
+    WorkspaceReadResolver,
+    WorkspaceReadShell,
+    workspace_not_found_response,
+)
 
 app = FastAPI(title="Custom Content Studio")
+_workspace_read_shell: WorkspaceReadShell | None = None
+_actor_context_provider: ActorContextProvider | None = None
+
+
+def configure_workspace_read_shell(
+    resolver: WorkspaceReadResolver | None,
+    actor_context_provider: ActorContextProvider | None,
+) -> None:
+    """Compose the local read shell from injected retrieval and existing actor context seams."""
+    global _workspace_read_shell, _actor_context_provider
+    _workspace_read_shell = WorkspaceReadShell(resolver) if resolver is not None else None
+    _actor_context_provider = actor_context_provider
+
+
+@app.get("/api/v1/workspaces/{workspace_id}")
+def workspace_read(request: Request, workspace_id: str) -> Response:
+    if _workspace_read_shell is None or _actor_context_provider is None:
+        return workspace_not_found_response()
+    actor_context = _actor_context_provider(request)
+    return _workspace_read_shell.read(
+        workspace_id,
+        request.headers.get("X-Workspace-Id"),
+        actor_context,
+    )
 
 
 def _request_context(request: Request) -> ObservabilityContext:
@@ -81,4 +111,12 @@ def main() -> Settings:
     return bootstrap(component=Component.API)
 
 
-__all__ = ["app", "health", "health_live", "health_ready", "main"]
+__all__ = [
+    "app",
+    "configure_workspace_read_shell",
+    "health",
+    "health_live",
+    "health_ready",
+    "main",
+    "workspace_read",
+]
